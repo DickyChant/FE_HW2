@@ -1,5 +1,31 @@
 \documentclass{article}
-
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{geometry}
+\geometry{left=2.0cm,right=2.0cm,top=2.5cm,bottom=2.5cm}
+\newtheoremstyle{break}%
+    {}{}%
+    {\itshape}{}%
+    {\bfseries}{}% % Note that final punctuation is omitted.
+    {\newline}{}
+\theoremstyle{break}
+\newtheorem*{definition}{Definition}
+\newtheorem*{proof_break}{Proof.}
+\lstset{
+    numbers=left, 
+    numberstyle= \tiny, 
+    keywordstyle= \color{ blue!70},
+    commentstyle= \color{red!50!green!50!blue!50}, 
+    frame=shadowbox, % 阴影效果
+    rulesepcolor= \color{ red!20!green!20!blue!20} ,
+    escapeinside=``, % 英文分号中可写入中文
+    xleftmargin=2em,xrightmargin=2em, aboveskip=1em,
+    framexleftmargin=2em
+} 
 
 \begin{document}
     \title{HW2}
@@ -8,6 +34,43 @@
 
     \section{Problem 1}
     \subsection{Subproblem 1}
-    
+    \begin{proof_break}\par
+        Firstly we can write $\hat{\sigma}_a^2$ and $\hat{\sigma}_b^2$ as following:
+        $$\left[\begin{array}{c}{\hat{\sigma}_{a}^{2}} \\ {\hat{\sigma}_{b}^{2}}\end{array}\right]=\frac{1}{nq} \sum_{k=1}^{n}\left[\begin{array}{c}{\sum_{j=1}^{q}(\varepsilon_{q(k-1)+j}^2)} \\ {(\sum_{j=1}^{q}\varepsilon_{q(k-1)+j})^{2}}\end{array}\right]$$
+        Since $\{\varepsilon_{qk}\}$ is an iid sequence, $\{\sum_{j=1}^{q}(\varepsilon_{q(k-1)+j}^2)\}$,$\{(\sum_{j=1}^{q}\varepsilon_{q(k-1)+j})^{2}\}$ are also iid sequences. Which enables us to use central limit theorem to obtain the
+        asymptotic distribution.\newline
+        The expectation is easy to obtain: 
+        $$\mathbb{E}\left[\begin{array}{c}{\sum_{j=1}^{q}(\varepsilon_{q(k-1)+j}^2)} \\ {(\sum_{j=1}^{q}\varepsilon_{q(k-1)+j})^{2}}\end{array}\right]=\left[\begin{array}{l}{q \sigma^{2}} \\ {q \sigma^{2}}\end{array}\right]$$
+        The variance can be obtained as below: 
+        \begin{align*}
+            &Var(\sum_{j=1}^{q}(\varepsilon_{q(k-1)+j}^2))\\
+            =&\sum_{j=1}^q(Var(\varepsilon^2_{q(k-1)+j}))\\
+            =&q(A-1)\sigma^4
+        \end{align*}
+        (Here I use $A$ to represent $\mathbb{E}{x}^4$, x is subject to standard normal distribution, in fact $A=3$;)
+        \begin{align*}
+            &Var((\sum_{j=1}^{q}\varepsilon_{q(k-1)+j})^2)\\
+            =&qA\sigma^4+6*C_q^2\sigma^4-q^2*\sigma^4\\
+            =&(Aq+2q^2-3q)\sigma^4
+        \end{align*}
+        and
+        \begin{align*}
+            &Cov((\sum_{j=1}^{q}\varepsilon_{q(k-1)+j})^2,\sum_{j=1}^{q}(\varepsilon_{q(k-1)+j}^2))\\
+            =&Var(\sum_{j=1}^{q}(\varepsilon_{q(k-1)+j}^2))+Cov(\sum_{i=1}^{q}\sum_{j\neq{i},j=1}^{q}(\varepsilon_{q(k-1)+i}\varepsilon_{q(k-1)+j}),\sum_{j=1}^{q}(\varepsilon_{q(k-1)+j}^2))\\
+            =&q(A-1)\sigma^4
+        \end{align*}
+        Finally we get:
+        \begin{align*}
+        Var\left(\left[\begin{array}{c}{\sum_{j=1}^{q}(\varepsilon_{q(k-1)+j}^2)} \\ {(\sum_{j=1}^{q}\varepsilon_{q(k-1)+j})^2}\end{array}\right]\right)=\left[\begin{array}{cc}{2q\sigma^4} & {2q\sigma^4}\\ {2q\sigma^{4}} & {2q^2\sigma^{4}}\end{array}\right]
+        \end{align*}
+        Therefore, using CLT,
+            $$\sqrt{n}\left(\left[\begin{array}{c}{\hat{\sigma}_{a}^{2}} \\ {\hat{\sigma}_{b}^{2}}\end{array}\right]-\left[\begin{array}{c}{\sigma^{2}} \\ {\sigma^{2}}\end{array}\right]\right) \rightarrow_{d} \mathbb{N}\left(0,\left[\begin{array}{cc}{\frac{2\sigma^{4}}{q}} & {\frac{2\sigma^4}{q}} \\ {\frac{2\sigma^{4}}{q}} & {2\sigma^4}\end{array}\right]\right)$$
+        With the Delta method, representing $J_r=\frac{\hat{\sigma}_b^2}{\hat{\sigma}_a^2}-1$ by $J_{r}=h(\hat{\sigma}_{a}^{2}, \hat{\sigma}_{b}^{2})$,we have: 
+        $$\sqrt{n}(h(\hat{\beta})-h(\beta)) \rightarrow_{d} \mathbb{N}\left(0, \nabla h^{T}(\beta) D \nabla h(\beta)\right.$$
+        where $\hat{\beta}=(\hat{\sigma}_{a}^{2}, \hat{\sigma}_{b}^{2})^{T}$, $\beta=\vec{0}$, and $D=\left[\begin{array}{cc}{\frac{2\sigma^{4}}{q}} & {\frac{2\sigma^4}{q}} \\ {\frac{2\sigma^{4}}{q}} & {2\sigma^4}\end{array}\right]$,
+        \newline
+        Namely, the distribution of $J_r$ is,
+        $$\sqrt{n}\left(J_{r}-0\right) \rightarrow_{d} \mathbb{N}\left(0,\left[\begin{array}{cc}{-\frac{1}{\sigma^{2}}} & {\frac{1}{\sigma^{2}}}\end{array}\right]\left[\begin{array}{cc}{\frac{A-\sigma^{4}}{2}} & {\frac{A-\sigma^{4}}{2}} \\ {\frac{A-\sigma^{4}}{2}} & {\frac{A+\sigma^{4}}{2}}\end{array}\right]\left[\begin{array}{c}{-\frac{1}{\sigma^{2}}} \\ {\frac{1}{\sigma^{2}}}\end{array}\right]\right)=\mathbb{N}(0,1)$$
+    \end{proof_break}
     
 \end{document}
